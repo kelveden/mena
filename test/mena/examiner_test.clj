@@ -1,6 +1,6 @@
 (ns mena.examiner-test
   (:require [clojure.test :refer :all]
-            [mena.examiner :as sut]
+            [mena.question-generator :as sut]
             [clojure.spec.test.alpha :as stest]))
 
 (stest/instrument)

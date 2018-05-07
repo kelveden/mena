@@ -1,7 +1,8 @@
 (ns mena.core
   (:require [clojure.string :as string]
             [clojure.tools.cli :as cli]
-            [mena.examiner :as q]
+            [mena.examiner :as examiner]
+            [mena.question-generator :as q]
             [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as stest])
   (:gen-class))
@@ -37,17 +38,13 @@
   (when msg (println msg))
   (System/exit status))
 
-(defn question-text
-  [{:keys [operator operands]}]
-  (case operator
-    `* (clojure.string/join " x " operands)))
-
 (defn -main [& args]
   (let [{:keys [summary help errors options]} (cli/parse-opts args cli-options)]
     (cond
       help (exit 0 (usage summary))
       errors (exit 1 (clojure.string/join "\n" errors))
       :else (do
-              (doseq [question (q/generate-questions `* options)]
-                (println (question-text question)))
+              (->> options
+                   (q/generate-questions `*)
+                   (examiner/prompt-questions))
               (exit 0 nil)))))
