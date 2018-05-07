@@ -27,6 +27,7 @@
     :parse-fn parse-int]
 
    ["-t" "--tables NUMBER" "Comma-separated list of times tables to generate against"
+    :default (range 1 13)
     :parse-fn #(map parse-int (clojure.string/split % #","))]
 
    ["-h" "--help"]])
@@ -39,9 +40,9 @@
   (System/exit status))
 
 (defn -main [& args]
-  (let [{:keys [summary help errors options]} (cli/parse-opts args cli-options)]
+  (let [{:keys [summary errors options]} (cli/parse-opts args cli-options)]
     (cond
-      help (exit 0 (usage summary))
+      (:help options) (exit 0 (usage summary))
       errors (exit 1 (clojure.string/join "\n" errors))
       :else (do
               (->> options
